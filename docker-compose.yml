@@ -13,17 +13,17 @@ services:
             - "5432:5432"
         
     
-    domain-service:
-        image: domain-service:latest
-        container_name: domain-service
-        build:
-            context: Domain-servise
-            dockerfile: Dockerfile
-        ports:
-            - "8081:8081"
+#    domain-service:
+#        image: domain-service:latest
+#        container_name: domain-service
+#        build:
+#            context: Domain-serviсe
+#            dockerfile: Dockerfile
+#        ports:
+#            - "8081:8081"
             
     rabbitmq:
-        image: rabbitmq:managment
+        image: rabbitmq:management
         container_name: rabbitmq
         ports:
             - "5672:5672"

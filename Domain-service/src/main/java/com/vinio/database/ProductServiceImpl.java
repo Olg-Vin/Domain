@@ -23,7 +23,10 @@ public class ProductServiceImpl {
 
     // Получение продукта по ID
     public Optional<ProductEntity> getProductById(int id) {
-        return productRepository.findById(id);
+        System.out.println("идём в базу: " + id);
+        Optional<ProductEntity> product = productRepository.findById(id);
+        System.out.println(product);
+        return product;
     }
 
     // Получение всех продуктов

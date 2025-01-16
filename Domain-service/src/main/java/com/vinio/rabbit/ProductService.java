@@ -31,11 +31,17 @@ public class ProductService extends ProductServiceGrpc.ProductServiceImplBase {
                 .orElseThrow(() -> new RuntimeException("Продукт не найден"));
         System.out.println("Продукт найден: " + productEntity);
 
-        product.setId(productEntity.getId())
-                .setName(productEntity.getName())
-                .setPrice(productEntity.getPrise())
-                .setCategory(productEntity.getCategory())
-                .setCount(productEntity.getCount());
+//        product.setId(productEntity.getId())
+//                .setName(productEntity.getName())
+//                .setPrice(productEntity.getPrise())
+//                .setCategory(productEntity.getCategory())
+//                .setCount(productEntity.getCount());
+
+        product.setId(1)
+                .setName("name")
+                .setPrice(10)
+                .setCategory("category")
+                .setCount(5);
 
         responseObserver.onNext(product.build());
         responseObserver.onCompleted();
