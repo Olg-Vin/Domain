@@ -59,4 +59,15 @@ public class ProductEntity {
     public void setCount(int count) {
         this.count = count;
     }
+
+    @Override
+    public String toString() {
+        return "ProductEntity{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", prise=" + prise +
+                ", category='" + category + '\'' +
+                ", count=" + count +
+                '}';
+    }
 }

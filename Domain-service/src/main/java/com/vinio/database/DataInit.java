@@ -7,10 +7,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class DataInit implements CommandLineRunner {
 
-    private final ProductService productService;
+    private final ProductServiceImpl productService;
 
     @Autowired
-    public DataInit(ProductService productService) {
+    public DataInit(ProductServiceImpl productService) {
         this.productService = productService;
     }
 
