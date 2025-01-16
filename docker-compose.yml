@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+    postgres:
+        image: postgres:16
+        container_name: postgres
+        enviroment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: product_db
+            PGDATA: /var/lib/postgresql/data/pgdata
+        ports:
+            - "5432:5432"
+        
+    
+    domain-service:
+        image: domain-service:latest
+        container_name: domain-service
+        build:
+            context: Domain-servise
+            dockerfile: Dockerfile
+        ports:
+            - "8081:8081"
