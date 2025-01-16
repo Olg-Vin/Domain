@@ -5,7 +5,7 @@ import org.vinio.product.grpc.Product;
 public class Main {
     public static void main(String[] args) {
         String host = "localhost";
-        int port = 50051;
+        int port = 6565;
 
         try (ProductClient client = new ProductClient(host, port)) {
             String productId = "1";

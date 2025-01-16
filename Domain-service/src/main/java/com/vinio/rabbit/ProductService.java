@@ -3,11 +3,12 @@ package com.vinio.rabbit;
 import com.vinio.database.ProductEntity;
 import com.vinio.database.ProductServiceImpl;
 import io.grpc.stub.StreamObserver;
+import org.lognet.springboot.grpc.GRpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.vinio.product.grpc.*;
 
-@Component
+@GRpcService
 public class ProductService extends ProductServiceGrpc.ProductServiceImplBase {
 
     @Autowired
@@ -31,17 +32,17 @@ public class ProductService extends ProductServiceGrpc.ProductServiceImplBase {
                 .orElseThrow(() -> new RuntimeException("Продукт не найден"));
         System.out.println("Продукт найден: " + productEntity);
 
-//        product.setId(productEntity.getId())
-//                .setName(productEntity.getName())
-//                .setPrice(productEntity.getPrise())
-//                .setCategory(productEntity.getCategory())
-//                .setCount(productEntity.getCount());
+        product.setId(productEntity.getId())
+                .setName(productEntity.getName())
+                .setPrice(productEntity.getPrise())
+                .setCategory(productEntity.getCategory())
+                .setCount(productEntity.getCount());
 
-        product.setId(1)
-                .setName("name")
-                .setPrice(10)
-                .setCategory("category")
-                .setCount(5);
+//        product.setId(1)
+//                .setName("name")
+//                .setPrice(10)
+//                .setCategory("category")
+//                .setCount(5);
 
         responseObserver.onNext(product.build());
         responseObserver.onCompleted();
