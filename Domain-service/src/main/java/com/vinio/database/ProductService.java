@@ -1,4 +1,4 @@
-package org.vinio;
+package com.vinio.database;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

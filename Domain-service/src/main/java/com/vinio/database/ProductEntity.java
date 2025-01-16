@@ -1,7 +1,6 @@
-package org.vinio;
+package com.vinio.database;
 
 import jakarta.persistence.*;
-import lombok.Data;
 
 @Entity
 @Table(name = "product")
