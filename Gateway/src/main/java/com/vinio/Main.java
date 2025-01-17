@@ -1,9 +1,18 @@
 package com.vinio;
 
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.vinio.product.grpc.Product;
 
-public class Main {
+@SpringBootApplication
+public class Main implements CommandLineRunner {
     public static void main(String[] args) {
+        SpringApplication.run(Main.class, args);
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
         String host = "localhost";
         int port = 50051;
 
