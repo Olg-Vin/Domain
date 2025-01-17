@@ -2,17 +2,26 @@ package com.vinio;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
+import com.vinio.rabbit.Sender;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
-import org.vinio.product.grpc.Product;
-import org.vinio.product.grpc.ProductRequest;
-import org.vinio.product.grpc.ProductServiceGrpc;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.vinio.product.grpc.*;
+
 import java.util.concurrent.TimeUnit;
 
+@Component
 public class ProductClient implements AutoCloseable {
-    private final ManagedChannel channel;
-    private final ProductServiceGrpc.ProductServiceBlockingStub blockingStub;
+    private ManagedChannel channel;
+    private ProductServiceGrpc.ProductServiceBlockingStub blockingStub;
+    @Autowired
+    Sender sender;
+
+    ProductClient() {
+
+    }
 
     public ProductClient(String host, int port) {
         this.channel = ManagedChannelBuilder
@@ -24,7 +33,7 @@ public class ProductClient implements AutoCloseable {
 
     public Product getProduct(String productId) {
         // Создаём запрос для получения продукта с указанным id
-        ProductRequest productRequest = ProductRequest.newBuilder()
+        ProductGetRequest productRequest = ProductGetRequest.newBuilder()
                 .setId(Integer.parseInt(productId))  // Устанавливаем id продукта
                 .build();
 
@@ -36,6 +45,15 @@ public class ProductClient implements AutoCloseable {
             System.err.println("Failed: " + e.getStatus());
         }
 
+        return null;
+    }
+
+    public ProductList getAllProducts() {
+        try {
+            return blockingStub.getAllProducts(Empty.newBuilder().build());
+        } catch (StatusRuntimeException e) {
+            System.err.println("Failed: " + e.getStatus());
+        }
         return null;
     }
 

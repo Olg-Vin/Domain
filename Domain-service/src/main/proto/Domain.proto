@@ -7,28 +7,20 @@ option java_package = "org.vinio.product.grpc";
 option java_outer_classname = "ProductProto";
 
 service ProductService {
-  rpc CreateProduct (Product) returns (ProductResponse);
-  rpc GetProduct (ProductRequest) returns (Product);
+  rpc GetProduct (ProductGetRequest) returns (Product);
   rpc GetAllProducts (Empty) returns (ProductList);
-  rpc UpdateProduct (Product) returns (ProductResponse);
-  rpc DeleteProduct (ProductRequest) returns (ProductResponse);
 }
 
 message Product {
-  int32 id = 1;
-  string name = 2;
-  double price = 3;
-  string category = 4;
-  int32 count = 5;
+  int32 id = 1;             // используется для delete/put
+  string name = 2;          // используется для post/put
+  double price = 3;         // используется для post/put
+  string category = 4;      // используется для post/put
+  int32 count = 5;          // используется для post/put
 }
 
-message ProductRequest {
+message ProductGetRequest {
   int32 id = 1;
-}
-
-message ProductResponse {
-  bool success = 1;
-  string message = 2;
 }
 
 message ProductList {
@@ -36,3 +28,14 @@ message ProductList {
 }
 
 message Empty {}
+
+// Используем для запросов с Rabbit
+message ProductOtherRequest {
+  string type = 1;          // тип запроса
+  Product product = 2;      // сам продукт
+}
+
+// Используется для ответа в Rabbit
+message SimpleResponse {
+  string status = 1;
+}
