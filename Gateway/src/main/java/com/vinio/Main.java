@@ -1,13 +1,18 @@
 package com.vinio;
 
+import com.vinio.rabbit.Sender;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.vinio.product.grpc.Product;
 import org.vinio.product.grpc.ProductList;
+import org.vinio.product.grpc.ProductOtherRequest;
 
 @SpringBootApplication
 public class Main implements CommandLineRunner {
+    @Autowired
+    Sender sender;
     public static void main(String[] args) {
         SpringApplication.run(Main.class, args);
     }
@@ -32,5 +37,19 @@ public class Main implements CommandLineRunner {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        sender.sendMessage("Hi from gateway");
+
+        ProductOtherRequest.Builder productOtherBuilder = ProductOtherRequest.newBuilder();
+        Product product = Product.newBuilder()
+                .setId(11)
+                .setName("name")
+                .setCount(1000)
+                .setCategory("new category")
+                .setPrice(555.555)
+                .build();
+        productOtherBuilder.setType("post")
+                        .setProduct(product);
+        sender.sendMessage(productOtherBuilder.build());
     }
 }

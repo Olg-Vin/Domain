@@ -19,7 +19,7 @@ public class ProductService extends ProductServiceGrpc.ProductServiceImplBase {
     }
 
     @Override
-    public void getProduct(ProductRequest request, StreamObserver<Product> responseObserver) {
+    public void getProduct(ProductGetRequest request, StreamObserver<Product> responseObserver) {
         System.out.println("Запрос на получение данных:\n" + request);
         Product.Builder product = Product.newBuilder();
 
