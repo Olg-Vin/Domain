@@ -3,19 +3,17 @@ package com.vinio.rabbit;
 import com.vinio.database.ProductEntity;
 import com.vinio.database.ProductServiceImpl;
 import io.grpc.stub.StreamObserver;
-import org.lognet.springboot.grpc.GRpcService;
-import org.springframework.beans.factory.annotation.Autowired;
+//import org.lognet.springboot.grpc.GRpcService;
 import org.springframework.stereotype.Component;
 import org.vinio.product.grpc.*;
 
-@GRpcService
+//@GRpcService
+@Component
 public class ProductService extends ProductServiceGrpc.ProductServiceImplBase {
+    private final ProductServiceImpl productServiceImpl;
 
-    @Autowired
-    private ProductServiceImpl productServiceImpl;
-
-    public ProductService() {
-
+    public ProductService(ProductServiceImpl productServiceImpl) {
+        this.productServiceImpl = productServiceImpl;
     }
 
     @Override
