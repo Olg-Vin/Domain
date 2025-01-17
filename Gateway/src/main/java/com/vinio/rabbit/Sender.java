@@ -20,7 +20,7 @@ public class Sender {
         rabbitTemplate.convertAndSend(EXCHANGE_NAME, ROUTING_KEY, message);
     }
 
-    public void sendMessage(ProductOtherRequest message) {
+    public void sendMessage(byte[] message) {
         rabbitTemplate.convertAndSend(EXCHANGE_NAME, ROUTING_KEY, message);
     }
 }

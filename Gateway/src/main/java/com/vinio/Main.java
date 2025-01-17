@@ -22,7 +22,7 @@ public class Main implements CommandLineRunner {
         String host = "localhost";
         int port = 50051;
 
-        try (ProductClient client = new ProductClient(host, port)) {
+        /*try (ProductClient client = new ProductClient(host, port)) {
             String productId = "1";
 
             Product product = client.getProduct(productId);
@@ -36,20 +36,20 @@ public class Main implements CommandLineRunner {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }
-
-        sender.sendMessage("Hi from gateway");
+        }*/
 
         ProductOtherRequest.Builder productOtherBuilder = ProductOtherRequest.newBuilder();
         Product product = Product.newBuilder()
                 .setId(11)
-                .setName("name")
-                .setCount(1000)
-                .setCategory("new category")
-                .setPrice(555.555)
+//                .setName("name")
+//                .setCount(1000)
+//                .setCategory("new category")
+//                .setPrice(555.555)
                 .build();
-        productOtherBuilder.setType("post")
+        productOtherBuilder.setType("delete")
                         .setProduct(product);
-        sender.sendMessage(productOtherBuilder.build());
+
+        byte[] serializedMessage = productOtherBuilder.build().toByteArray();
+        sender.sendMessage(serializedMessage);
     }
 }
