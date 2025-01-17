@@ -7,6 +7,8 @@ import io.grpc.stub.StreamObserver;
 import org.springframework.stereotype.Component;
 import org.vinio.product.grpc.*;
 
+import java.util.List;
+
 //@GRpcService
 @Component
 public class ProductService extends ProductServiceGrpc.ProductServiceImplBase {
@@ -14,11 +16,6 @@ public class ProductService extends ProductServiceGrpc.ProductServiceImplBase {
 
     public ProductService(ProductServiceImpl productServiceImpl) {
         this.productServiceImpl = productServiceImpl;
-    }
-
-    @Override
-    public void createProduct(Product request, StreamObserver<ProductResponse> responseObserver) {
-
     }
 
     @Override
@@ -36,28 +33,30 @@ public class ProductService extends ProductServiceGrpc.ProductServiceImplBase {
                 .setCategory(productEntity.getCategory())
                 .setCount(productEntity.getCount());
 
-//        product.setId(1)
-//                .setName("name")
-//                .setPrice(10)
-//                .setCategory("category")
-//                .setCount(5);
-
         responseObserver.onNext(product.build());
         responseObserver.onCompleted();
     }
 
     @Override
     public void getAllProducts(Empty request, StreamObserver<ProductList> responseObserver) {
-        super.getAllProducts(request, responseObserver);
-    }
+        System.out.println("Запрос на получение данных:");
+        ProductList.Builder productListBuilder = ProductList.newBuilder();
 
-    @Override
-    public void updateProduct(Product request, StreamObserver<ProductResponse> responseObserver) {
-        super.updateProduct(request, responseObserver);
-    }
+        List<ProductEntity> productEntityList = productServiceImpl.getAllProducts();
+        System.out.println("Продукты найдены: " + productEntityList);
 
-    @Override
-    public void deleteProduct(ProductRequest request, StreamObserver<ProductResponse> responseObserver) {
-        super.deleteProduct(request, responseObserver);
+        for (ProductEntity entity : productEntityList) {
+            Product product = Product.newBuilder()
+                    .setId(entity.getId())
+                    .setName(entity.getName())
+                    .setPrice(entity.getPrise())
+                    .setCategory(entity.getCategory())
+                    .setCount(entity.getCount())
+                    .build();
+            productListBuilder.addProducts(product);
+        }
+
+        responseObserver.onNext(productListBuilder.build());
+        responseObserver.onCompleted();
     }
 }

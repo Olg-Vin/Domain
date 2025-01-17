@@ -4,6 +4,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.vinio.product.grpc.Product;
+import org.vinio.product.grpc.ProductList;
 
 @SpringBootApplication
 public class Main implements CommandLineRunner {
@@ -20,9 +21,11 @@ public class Main implements CommandLineRunner {
             String productId = "1";
 
             Product product = client.getProduct(productId);
+            ProductList productList = client.getAllProducts();
 
             if (product != null) {
                 System.out.println("Получен продукт: " + product);
+                System.out.println("Получен список продуктов: " + productList);
             } else {
                 System.out.println("Продукт не найден.");
             }

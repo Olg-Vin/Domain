@@ -5,9 +5,8 @@ import com.google.protobuf.util.JsonFormat;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
-import org.vinio.product.grpc.Product;
-import org.vinio.product.grpc.ProductRequest;
-import org.vinio.product.grpc.ProductServiceGrpc;
+import org.vinio.product.grpc.*;
+
 import java.util.concurrent.TimeUnit;
 
 public class ProductClient implements AutoCloseable {
@@ -36,6 +35,15 @@ public class ProductClient implements AutoCloseable {
             System.err.println("Failed: " + e.getStatus());
         }
 
+        return null;
+    }
+
+    public ProductList getAllProducts() {
+        try {
+            return blockingStub.getAllProducts(Empty.newBuilder().build());
+        } catch (StatusRuntimeException e) {
+            System.err.println("Failed: " + e.getStatus());
+        }
         return null;
     }
 

@@ -7,17 +7,16 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * Конфигурация для двух очередей
- * gRPC queue - очередь, которую слушает grpc сервис
- * Audit queue - очередь, которую слушает audit (нет реализации)
- * */
+ * QueueToDomain - очередь, которую слушает domain-сервис
+ * QueueToGateway - очередь, которую слушает gateway-сервис
+ */
 @Configuration
 public class RMQConfig {
-    static final String EXCHANGE_NAME = "defaultExchange";
+    static final String EXCHANGE_NAME = "productExchange";
 
     public enum QueueNames {
-        GRPC_QUEUE("GRPCQueue"),
-        AUDIT_QUEUE("AuditQueue"),
-        NOTIFIER_QUEUE("NotifierQueue");
+        QUEUE_TO_DOMAIN("QueueToDomain"),
+        QUEUE_TO_GATEWAY("QueueToGateway");
 
         private final String name;
 
@@ -35,40 +34,32 @@ public class RMQConfig {
         return new DirectExchange(EXCHANGE_NAME, false, false);
     }
 
-    // Создание очереди с указанным именем
-    @Bean(name = "grpcQueue")
-    public Queue grpcQueue() {
-        return createQueue(QueueNames.GRPC_QUEUE);
+    // Создание очереди для domain
+    @Bean(name = "queueToDomain")
+    public Queue queueToDomain() {
+        return createQueue(QueueNames.QUEUE_TO_DOMAIN);
     }
 
-    @Bean(name = "auditQueue")
-    public Queue auditQueue() {
-        return createQueue(QueueNames.AUDIT_QUEUE);
-    }
-
-    @Bean(name = "notifierQueue")
-    public Queue notifierQueue() {
-        return createQueue(QueueNames.NOTIFIER_QUEUE);
+    // Создание очереди для gateway
+    @Bean(name = "queueToGateway")
+    public Queue queueToGateway() {
+        return createQueue(QueueNames.QUEUE_TO_GATEWAY);
     }
 
     private Queue createQueue(QueueNames queueName) {
         return new Queue(queueName.getName(), false);
     }
 
-    // Создание привязок для каждой очереди
+    // Создание привязки для QueueToDomain
     @Bean
-    public Binding bindingGrpcQueue(@Qualifier("grpcQueue") Queue grpcQueue, Exchange exchange) {
-        return createBinding(grpcQueue, exchange, "grpc.key");
+    public Binding bindingQueueToDomain(@Qualifier("queueToDomain") Queue queueToDomain, Exchange exchange) {
+        return createBinding(queueToDomain, exchange, "to.domain.key");
     }
 
+    // Создание привязки для QueueToGateway
     @Bean
-    public Binding bindingAuditQueue(@Qualifier("auditQueue") Queue auditQueue, Exchange exchange) {
-        return createBinding(auditQueue, exchange, "audit.key");
-    }
-
-    @Bean
-    public Binding bindingNotifierQueue(@Qualifier("notifierQueue") Queue notifierQueue, Exchange exchange) {
-        return createBinding(notifierQueue, exchange, "notifier.key");
+    public Binding bindingQueueToGateway(@Qualifier("queueToGateway") Queue queueToGateway, Exchange exchange) {
+        return createBinding(queueToGateway, exchange, "to.gateway.key");
     }
 
     private Binding createBinding(Queue queue, Exchange exchange, String routingKey) {

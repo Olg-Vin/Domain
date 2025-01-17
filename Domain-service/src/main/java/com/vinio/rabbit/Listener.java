@@ -8,12 +8,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class Listener {
-    static final String queueName = "GRPCQueue";
+    static final String queueName = "QueueToDomain";
 
     @Autowired
     private Sender sender;
 
-//    @Bean
+    @Bean
     public Queue myQueue() {
         return new Queue(queueName, false);
     }
