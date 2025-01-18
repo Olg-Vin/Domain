@@ -1,7 +1,7 @@
-package com.vinio;
+package org.vinio;
 
-import com.vinio.database.ProductServiceImpl;
-import com.vinio.rabbit.ProductService;
+import org.vinio.database.ProductServiceImpl;
+import org.vinio.rabbit.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import io.grpc.Server;

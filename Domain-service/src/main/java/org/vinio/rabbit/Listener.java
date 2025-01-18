@@ -1,8 +1,8 @@
-package com.vinio.rabbit;
+package org.vinio.rabbit;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.vinio.database.ProductEntity;
-import com.vinio.database.ProductServiceImpl;
+import org.vinio.database.ProductEntity;
+import org.vinio.database.ProductServiceImpl;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

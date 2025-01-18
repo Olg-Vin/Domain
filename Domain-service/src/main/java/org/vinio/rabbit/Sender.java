@@ -1,4 +1,4 @@
-package com.vinio.rabbit;
+package org.vinio.rabbit;
 
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;

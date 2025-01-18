@@ -12,16 +12,17 @@ services:
         ports:
             - "5432:5432"
         
-    
-#    domain-service:
-#        image: domain-service:latest
-#        container_name: domain-service
-#        build:
-#            context: Domain-serviсe
-#            dockerfile: Dockerfile
-#        ports:
-#            - "8081:8081"
-            
+
+    domain-service:
+        image: domain-service:latest
+        build:
+            context: Domain-service
+            dockerfile: Dockerfile
+        container_name: domain-service
+        ports:
+            - "8081:8081"
+            - "50051:50051"
+
     rabbitmq:
         image: rabbitmq:management
         container_name: rabbitmq
@@ -65,7 +66,7 @@ services:
         environment:
             - 'ELASTICSEARCH_HOSTS=["http://elasticsearch:9200"]'
         ports:
-            - 5601:5601
+            - "5601:5601"
         depends_on:
             - elasticsearch
         networks:

@@ -1,7 +1,7 @@
-package com.vinio.rabbit;
+package org.vinio.rabbit;
 
-import com.vinio.database.ProductEntity;
-import com.vinio.database.ProductServiceImpl;
+import org.vinio.database.ProductEntity;
+import org.vinio.database.ProductServiceImpl;
 import io.grpc.stub.StreamObserver;
 //import org.lognet.springboot.grpc.GRpcService;
 import org.springframework.stereotype.Component;

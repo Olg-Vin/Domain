@@ -1,4 +1,4 @@
 FROM openjdk:21-jdk
 WORKDIR /app
-COPY target/Domain-servise-1.0.jar app.jar
+COPY target/Domain-service-1.0-SNAPSHOT.jar app.jar
 CMD ["java", "-jar", "app.jar"]
