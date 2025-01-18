@@ -7,6 +7,17 @@ public class ProductResponse {
     private String category;
     private int count;
 
+    public ProductResponse() {
+    }
+
+    public ProductResponse(int id, String name, double price, String category, int count) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.category = category;
+        this.count = count;
+    }
+
     // Getters и Setters
     public int getId() {
         return id;

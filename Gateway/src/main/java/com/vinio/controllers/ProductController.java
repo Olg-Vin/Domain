@@ -2,6 +2,11 @@ package com.vinio.controllers;
 
 import com.vinio.ProductClient;
 import com.vinio.rabbit.Sender;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.vinio.product.grpc.Product;
@@ -15,22 +20,29 @@ import java.util.stream.Collectors;
 public class ProductController {
 
     private final Sender sender;
+    private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
+
+    @Value("${grpc.host}")
+    private String host;
+
+    @Value("${grpc.port}")
+    private int port;
 
     public ProductController(Sender sender) {
         this.sender = sender;
     }
 
-    private final String host = "localhost";
-    private final int port = 50051;
-
     // GET запрос: Получить продукт по ID через gRPC
     @GetMapping("/{id}")
-    public ResponseEntity<ProductResponse> getProduct(@PathVariable String id) {
+    @Cacheable(value = "productCache", key = "#id")
+    public ProductResponse getProduct(@PathVariable String id) throws Exception {
+        logger.info("Incoming GET request for product with id: {}", id);  // Логирование входящего запроса
         try (ProductClient client = new ProductClient(host, port)) {
+            logger.info("Sending gRPC request to get product by id: {}", id);  // Логирование исходящего запроса
             Product product = client.getProduct(id);
 
             if (product == null) {
-                return ResponseEntity.notFound().build();
+                throw new RuntimeException("Product not found");
             }
 
             ProductResponse response = new ProductResponse();
@@ -40,21 +52,24 @@ public class ProductController {
             response.setCategory(product.getCategory());
             response.setCount(product.getCount());
 
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
+            logger.info("Received product response: {}", response);  // Логирование ответа
+
+            return response;
         }
     }
 
     // GET запрос: Получить все продукты через gRPC
     @GetMapping
-    public ResponseEntity<List<ProductResponse>> getAllProducts() {
+    @Cacheable(value = "productCache", key = "'all'")
+    public List<ProductResponse> getAllProducts() {
+        logger.info("Incoming GET request to fetch all products");
         try (ProductClient client = new ProductClient(host, port)) {
+            logger.info("Sending gRPC request to get all products");
             var productList = client.getAllProducts();
 
             if (productList == null || productList.getProductsList().isEmpty()) {
-                return ResponseEntity.noContent().build();
+                logger.info("No products found");
+                return List.of();
             }
 
             List<ProductResponse> responses = productList.getProductsList().stream().map(product -> {
@@ -67,16 +82,19 @@ public class ProductController {
                 return response;
             }).collect(Collectors.toList());
 
-            return ResponseEntity.ok(responses);
+            logger.info("Received product list response with {} products", responses.size());
+            return responses;
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
+            logger.error("Error fetching products", e);
+            throw new RuntimeException("Internal server error");
         }
     }
 
     // POST запрос: Создать новый продукт через RabbitMQ
     @PostMapping
+    @CacheEvict(value = "productCache", allEntries = true)
     public ResponseEntity<String> createProduct(@RequestBody ProductRequest request) {
+        logger.info("Incoming POST request to create product: {}", request);
         try {
             Product product = Product.newBuilder()
                     .setName(request.getName())
@@ -90,16 +108,20 @@ public class ProductController {
                     .setProduct(product)
                     .build();
 
+            logger.info("Sending product creation message via RabbitMQ: {}", message);
             sender.sendMessage(message.toByteArray());
             return ResponseEntity.ok("Product creation message sent via RabbitMQ");
         } catch (Exception e) {
+            logger.error("Error creating product", e);
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
 
     // PUT запрос: Обновить продукт через RabbitMQ
     @PutMapping("/{id}")
+    @CacheEvict(value = "productCache", allEntries = true)
     public ResponseEntity<String> updateProduct(@PathVariable String id, @RequestBody ProductRequest request) {
+        logger.info("Incoming PUT request to update product with id: {}", id);
         try {
             Product product = Product.newBuilder()
                     .setId(Integer.parseInt(id))
@@ -114,16 +136,20 @@ public class ProductController {
                     .setProduct(product)
                     .build();
 
+            logger.info("Sending product update message via RabbitMQ: {}", message);
             sender.sendMessage(message.toByteArray());
             return ResponseEntity.ok("Product update message sent via RabbitMQ");
         } catch (Exception e) {
+            logger.error("Error updating product", e);
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
 
     // DELETE запрос: Удалить продукт через RabbitMQ
     @DeleteMapping("/{id}")
+    @CacheEvict(value = "productCache", allEntries = true)
     public ResponseEntity<String> deleteProduct(@PathVariable String id) {
+        logger.info("Incoming DELETE request to delete product with id: {}", id);
         try {
             Product product = Product.newBuilder()
                     .setId(Integer.parseInt(id))
@@ -134,9 +160,11 @@ public class ProductController {
                     .setProduct(product)
                     .build();
 
+            logger.info("Sending product deletion message via RabbitMQ: {}", message);
             sender.sendMessage(message.toByteArray());
             return ResponseEntity.ok("Product deletion message sent via RabbitMQ");
         } catch (Exception e) {
+            logger.error("Error deleting product", e);
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }

@@ -6,6 +6,16 @@ public class ProductRequest {
     private String category;
     private int count;
 
+    public ProductRequest() {
+    }
+
+    public ProductRequest(String name, double price, String category, int count) {
+        this.name = name;
+        this.price = price;
+        this.category = category;
+        this.count = count;
+    }
+
     // Getters и Setters
     public String getName() {
         return name;
