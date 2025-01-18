@@ -40,13 +40,13 @@ public class Main implements CommandLineRunner {
 
         ProductOtherRequest.Builder productOtherBuilder = ProductOtherRequest.newBuilder();
         Product product = Product.newBuilder()
-                .setId(11)
+//                .setId(11)
                 .setName("name")
                 .setCount(1000)
                 .setCategory("new category")
                 .setPrice(555.555)
                 .build();
-        productOtherBuilder.setType("put")
+        productOtherBuilder.setType("post")
                         .setProduct(product);
 
         byte[] serializedMessage = productOtherBuilder.build().toByteArray();
