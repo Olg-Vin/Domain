@@ -4,6 +4,7 @@ services:
     postgres:
         image: postgres:16
         container_name: postgres
+        restart: always
         environment:
             POSTGRES_USER: postgres
             POSTGRES_PASSWORD: postgres
@@ -18,22 +19,30 @@ services:
             context: Domain-service
             dockerfile: Dockerfile
         container_name: domain-service
+        restart: unless-stopped
         ports:
             - "8081:8081"
             - "50051:50051"
+        depends_on:
+            - postgres
+            - rabbitmq
+            - redis
 
     gateway:
         image: gateway:latest
         build:
             context: Gateway
-            dockerfile: Dockerfile
         container_name: gateway
+        restart: unless-stopped
         ports:
             - "8080:8080"
+        depends_on:
+            - domain-service
 
     rabbitmq:
         image: rabbitmq:management
         container_name: rabbitmq
+        restart: always
         environment:
             RABBITMQ_DEFAULT_USER: guest
             RABBITMQ_DEFAULT_PASS: guest
@@ -44,6 +53,7 @@ services:
     pgadmin:
         image: dpage/pgadmin4
         container_name: pgadmin
+        restart: on-failure
         environment:
             PGADMIN_DEFAULT_EMAIL: admin@admin.com
             PGADMIN_DEFAULT_PASSWORD: admin
@@ -57,15 +67,15 @@ services:
     redis:
         image: redis:7.0
         container_name: redis
+        restart: always
         ports:
             - "6379:6379"
-        restart: always
-        command: [ "redis-server", "--appendonly", "yes" ] # Включение режима сохранения данных
+        command: [ "redis-server", "--appendonly", "yes" ]
 
     elasticsearch:
         image: elasticsearch:8.8.0
         container_name: elasticsearch
-        restart: unless-stopped
+        restart: always
         ports:
             - "9200:9200"
         environment:
@@ -77,6 +87,7 @@ services:
     kibana:
         image: kibana:8.8.0
         container_name: kibana
+        restart: on-failure
         environment:
             - 'ELASTICSEARCH_HOSTS=["http://elasticsearch:9200"]'
         ports:
@@ -87,9 +98,10 @@ services:
     logstash:
         image: logstash:8.8.0
         container_name: logstash
+        restart: unless-stopped
         ports:
-            - "5044:5044"   # Filebeat input
-            - "5000:5000"   # TCP input
+            - "5044:5044"
+            - "5000:5000"
         environment:
             LS_JAVA_OPTS: "-Xms512m -Xmx512m"
         volumes:
@@ -101,6 +113,7 @@ services:
     prometheus:
         image: prom/prometheus
         container_name: prometheus
+        restart: always
         ports:
             - "9090:9090"
         volumes:
@@ -111,10 +124,13 @@ services:
     grafana:
         image: grafana/grafana
         container_name: grafana
+        restart: on-failure
         ports:
             - "3000:3000"
         environment:
             GF_SECURITY_ADMIN_PASSWORD: "admin"
+        depends_on:
+            - prometheus
 
 volumes:
     pgadmin_data:
