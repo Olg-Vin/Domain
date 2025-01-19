@@ -1,19 +1,23 @@
-package com.vinio;
+package org.vinio;
 
-import com.vinio.rabbit.Sender;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cache.annotation.EnableCaching;
-import org.vinio.product.grpc.Product;
-import org.vinio.product.grpc.ProductList;
-import org.vinio.product.grpc.ProductOtherRequest;
+
+import javax.annotation.PostConstruct;
 
 @SpringBootApplication
-@EnableCaching
 public class Main {
+
+    @Autowired
+    private GrpcServer grpcServer;
+
     public static void main(String[] args) {
         SpringApplication.run(Main.class, args);
+    }
+
+    @PostConstruct
+    public void startGrpcServer() throws Exception {
+        grpcServer.start();
     }
 }

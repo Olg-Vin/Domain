@@ -4,5 +4,5 @@ COPY . /app
 RUN mvn clean install -DskipTests
 FROM amazoncorretto:21 AS runtime
 WORKDIR /app
-COPY --from=build /app/target/Domain-service-1.0-SNAPSHOT.jar /app/Domain-service.jar
-CMD ["java", "-jar", "Domain-service.jar"]
+COPY --from=build /app/target/Gateway-1.0.jar /app/Gateway-1.0.jar
+CMD ["java", "-jar", "Gateway-1.0.jar"]

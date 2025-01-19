@@ -1,4 +1,4 @@
-package com.vinio.database;
+package org.vinio.database;
 
 import jakarta.persistence.*;
 
